@@ -1,7 +1,6 @@
 import oauth2
 import requests
 import urllib
-import time
 
 from abc import ABCMeta, abstractmethod
 from pcurl.constants import GOOGLE_API_KEY, GOOGLE_CX_PARAM
@@ -83,7 +82,6 @@ class TwitterSearchService(BaseSearchService):
 
     def get_rest_url(self):
         search_url = SEARCH_KEY_URL_MAP.get(self.service_type)
-        time.sleep(2)
         search_params = {
             'q': self.q
         }
