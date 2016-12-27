@@ -8,15 +8,32 @@ from pcurl.utils import TwitterSearchService
 
 
 def psearch(request):
+    """
+    View to search multiple resource sites parallely for single request.
+    It takes get parameter q and searches paralley in google, duckduckgo
+    and twiter service.
+    """
+    # query to be searched for
     q = request.GET.get('q', '')
+
+    # different type of search services
     search_services = [GoogleSearchService, DuckDuckGoSearchService,
                        TwitterSearchService]
+
+    # initializing service objs here
     search_service_objs = [service(q) for service in search_services]
+
+    # initializing pool for parallel processing
     pool = ThreadPool(processes=3)
-    # dict comprehension for search dict
+
+    # dict comprehension for search dict in format
+    # (key, value) = (service_obj, async service process)
     multiple_search_dict = {service_obj: pool.apply_async(service_obj.get_search_result)
                               for service_obj in search_service_objs}
+    # response dict that holds the final result
     response_dict = {'query': q}
+
+    # search result dict to hold the response from different service.
     search_results = {}
     for service_obj, search in multiple_search_dict.iteritems():
         search_result = ''
